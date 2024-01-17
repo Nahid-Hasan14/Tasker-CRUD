@@ -5,6 +5,7 @@ import TasksList from "./TasksList";
 import AddTaskModal from "./AddTaskModal";
 import NoTaskYet from "./NoTaskYet";
 
+//defaultTask/initial value
 const defaultTask = {
   id: crypto.randomUUID(),
   title: "React Developer",
@@ -20,6 +21,7 @@ export default function TasksBoard() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState(null);
 
+  //Edit and Add tasks Function
   const handleAddEditTask = (newTask, isAdd) => {
     if (isAdd) {
       setTasks([...tasks, newTask]);
@@ -36,25 +38,30 @@ export default function TasksBoard() {
     setShowAddModal(false);
   };
 
+  //Edit function
   const handleEditTask = (task) => {
     setTaskToUpdate(task);
     setShowAddModal(true);
   };
 
+  //Modal Close function
   const handleCloss = () => {
     setTaskToUpdate(null);
     setShowAddModal(false);
   };
 
+  // One task Delete function
   const handleDelete = (id) => {
     const deleteTask = tasks.filter((value) => value.id !== id);
     setTasks(deleteTask);
   };
 
+  //All task Delete function
   const handleAlllDelete = () => {
     setTasks([]);
   };
 
+  // Add Favorite function
   const handleFavorite = (id) => {
     const taskIdex = tasks.findIndex((task) => task.id === id);
     // console.log(taskIdex);
@@ -63,6 +70,7 @@ export default function TasksBoard() {
     setTasks(newTask);
   };
 
+  //Search function
   const handleSearch = (searchTask) => {
     console.log(searchTask);
     const filtered = tasks.filter((task) => {
