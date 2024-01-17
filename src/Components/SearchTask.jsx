@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
-export default function SearchTask() {
+export default function SearchTask({ onSearch }) {
+  const [searchTask, setSearchTask] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    onSearch(searchTask);
+  };
   return (
     <div>
       <div className="p-2 flex justify-end">
@@ -8,6 +14,8 @@ export default function SearchTask() {
           <div className="flex">
             <div className="relative overflow-hidden rounded-lg text-gray-50 md:min-w-[380px] lg:min-w-[440px]">
               <input
+                onChange={(e) => setSearchTask(e.target.value)}
+                value={searchTask}
                 type="search"
                 id="search-dropdown"
                 className="z-20 block w-full bg-gray-800 px-4 py-2 pr-10 focus:outline-none"
@@ -15,6 +23,7 @@ export default function SearchTask() {
                 required
               />
               <button
+                onClick={handleSearch}
                 type="submit"
                 className="absolute right-2 top-0 h-full rounded-e-lg text-white md:right-4"
               >

@@ -3,11 +3,12 @@ import SearchTask from "./SearchTask";
 import AddTasks from "./AddTasks";
 import TasksList from "./TasksList";
 import AddTaskModal from "./AddTaskModal";
+import NoTaskYet from "./NoTaskYet";
 
 const defaultTask = {
   id: crypto.randomUUID(),
   title: "React Developer",
-  describtion:
+  description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo modi facilis",
   tags: ["Web", "React", "JS"],
   priority: "High",
@@ -17,21 +18,86 @@ const defaultTask = {
 export default function TasksBoard() {
   const [tasks, setTasks] = useState([defaultTask]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
 
-  const handleAddTask = (task) => {
-    setTasks([...tasks, task]);
-    console.log(task);
+  const handleAddEditTask = (newTask, isAdd) => {
+    if (isAdd) {
+      setTasks([...tasks, newTask]);
+    } else {
+      setTasks(
+        tasks.map((task) => {
+          if (task.id === newTask.id) {
+            return newTask;
+          }
+          return task;
+        })
+      );
+    }
     setShowAddModal(false);
   };
+
+  const handleEditTask = (task) => {
+    setTaskToUpdate(task);
+    setShowAddModal(true);
+  };
+
+  const handleCloss = () => {
+    setTaskToUpdate(null);
+    setShowAddModal(false);
+  };
+
+  const handleDelete = (id) => {
+    const deleteTask = tasks.filter((value) => value.id !== id);
+    setTasks(deleteTask);
+  };
+
+  const handleAlllDelete = () => {
+    setTasks([]);
+  };
+
+  const handleFavorite = (id) => {
+    const taskIdex = tasks.findIndex((task) => task.id === id);
+    // console.log(taskIdex);
+    const newTask = [...tasks];
+    newTask[taskIdex].isFavorite = !newTask[taskIdex].isFavorite;
+    setTasks(newTask);
+  };
+
+  const handleSearch = (searchTask) => {
+    console.log(searchTask);
+    const filtered = tasks.filter((task) => {
+      return task.title.toLowerCase().includes(searchTask.toLowerCase());
+    });
+    setTasks([...filtered]);
+  };
+
   return (
     <div>
       <section className="mb-20" id="tasks">
-        {showAddModal && <AddTaskModal onSave={handleAddTask} />}
+        {showAddModal && (
+          <AddTaskModal
+            onSave={handleAddEditTask}
+            taskToUpdate={taskToUpdate}
+            handleCloss={handleCloss}
+          />
+        )}
         <div className="container">
-          <SearchTask />
+          <SearchTask onSearch={handleSearch} />
           <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
-            <AddTasks onAddClick={() => setShowAddModal(true)} />
-            <TasksList tasks={tasks} />
+            <AddTasks
+              onAddClick={() => setShowAddModal(true)}
+              allDelete={handleAlllDelete}
+            />
+            {tasks.length > 0 ? (
+              <TasksList
+                tasks={tasks}
+                onEdit={handleEditTask}
+                onDelete={handleDelete}
+                onFavorite={handleFavorite}
+              />
+            ) : (
+              <NoTaskYet />
+            )}
           </div>
         </div>
       </section>
